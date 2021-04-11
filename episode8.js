@@ -177,3 +177,38 @@ if (!Function.prototype.softBind) {
         return bound;
     }
 }
+
+/* 对于访问描述符来说，JavaScript 会忽略它们的 value 和
+writable 特性，取而代之的是关心 set 和 get（还有 configurable 和 enumerable）特性。 */
+
+var myObject = {
+    get a() {
+        return 2;
+    }
+}
+
+Object.defineProperty(
+    myObject,
+    'b',
+    {
+        get: function () { return this.a * 2 }//给b设置一个getter
+
+    }
+)
+
+// 无限迭代器
+var randoms = {
+    [Symbol.iterator]: function () {
+        return {
+            next: function () {
+                return { value: Math.random() };
+            }
+        };
+    }
+};
+var randoms_pool = [];
+for (var n of randoms) {
+    randoms_pool.push(n);
+    // 防止无限运行！
+    if (randoms_pool.length === 100) break;
+}
